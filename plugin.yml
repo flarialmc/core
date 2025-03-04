@@ -1,0 +1,26 @@
+name: LobbyCore
+version: 1.0.0
+author: MBG1337
+main: LobbyCore\main
+api: 5.0.0
+dependencies: []
+commands:
+  hub:
+    description: Return to the lobby
+    usage: /hub
+    permission: lobbycore.command.hub
+  friend:
+    description: Manage your friends
+    usage: /friend <add|remove|list> [player]
+    permission: lobbycore.command.friend
+  rank:
+    description: Manage player ranks
+    usage: /rank <set|get> [player] [rank]
+    permission: lobbycore.command.rank
+permissions:
+  lobbycore.command.hub:
+    default: true
+  lobbycore.command.friend:
+    default: true
+  lobbycore.command.rank:
+    default: op
