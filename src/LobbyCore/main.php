@@ -50,6 +50,14 @@ class Main extends PluginBase implements Listener {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
+    public function onPlayerJoin(PlayerJoinEvent $event): void {
+        $player = $event->getPlayer();
+        $world = $player->getWorld();
+        
+        if ($world->getFolderName() === "lobby") { 
+            $this->giveLobbyItems($player);
+        }
+      }
     private function giveLobbyItems(Player $player): void {
         $inventory = $player->getInventory();
         $inventory->clearAll();
@@ -60,9 +68,9 @@ class Main extends PluginBase implements Listener {
         $partyMenu = VanillaItems::CLOCK()->setCustomName("§6Party");
 
         $inventory->setItem(0, $gameSelector);
-        $inventory->setItem(7, $cosmeticsMenu);
-        $inventory->setItem(8, $friendsMenu);
-        $inventory->setItem(9, $partyMenu);
+        $inventory->setItem(6, $cosmeticsMenu);
+        $inventory->setItem(7, $friendsMenu);
+        $inventory->setItem(8, $partyMenu);
     }
 
     public function onPlayerInteract(PlayerInteractEvent $event): void {
@@ -102,9 +110,9 @@ class Main extends PluginBase implements Listener {
     private function openGameSelector(Player $player): void {
         $form = new SimpleForm(function (Player $player, ?int $data) {
             if ($data === null) return;
+            
             if ($data === 0) {
-                $player->teleport(new Vector3(100, 50, 100)); // Change to KBFFA spawn coordinates
-                $player->sendMessage("§aTeleporting to Knockback FFA!");
+                $this->getServer()->dispatchCommand($player, "kbffa join");
             }
         });
 
