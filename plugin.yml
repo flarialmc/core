@@ -13,14 +13,8 @@ commands:
     description: Manage your friends
     usage: /friend <add|remove|list> [player]
     permission: lobbycore.command.friend
-  rank:
-    description: Manage player ranks
-    usage: /rank <set|get> [player] [rank]
-    permission: lobbycore.command.rank
 permissions:
   lobbycore.command.hub:
     default: true
   lobbycore.command.friend:
     default: true
-  lobbycore.command.rank:
-    default: op
