@@ -73,29 +73,25 @@ class Main extends PluginBase implements Listener {
         $inventory->setItem(8, $partyMenu);
     }
 
-public function onPlayerInteract(PlayerInteractEvent $event): void {
+public function onPlayerItemUse(PlayerItemUseEvent $event): void {
     $player = $event->getPlayer();
     $item = $event->getItem();
-    $block = $event->getBlock();
-    $action = $event->getAction();
 
-    // If the player right-clicks a block OR interacts with air
-    if ($action === PlayerInteractEvent::RIGHT_CLICK_BLOCK || $block->getTypeId() === 0) {
-        switch ($item->getCustomName()) {
-            case "§aGame Selector":
-                $this->openGameSelector($player);
-                break;
-            case "§bCosmetics":
-                $this->openCosmeticsMenu($player);
-                break;
-            case "§eFriends":
-                $this->openFriendMenu($player);
-                break;
-            case "§6Party":
-                $player->sendMessage("§cParty menu is not functional yet!");
-                break;
-        }
+    switch ($item->getCustomName()) {
+        case "§aGame Selector":
+            $this->openGameSelector($player);
+            break;
+        case "§bCosmetics":
+            $this->openCosmeticsMenu($player);
+            break;
+        case "§eFriends":
+            $this->openFriendMenu($player);
+            break;
+        case "§6Party":
+            $player->sendMessage("§cParty menu is not functional yet!");
+            break;
     }
+  }
 }
 
 
