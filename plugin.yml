@@ -3,7 +3,8 @@ version: 2.0.0
 author: MBG1337
 main: LobbyCore\main
 api: 5.0.0
-dependencies: []
+dependencies: 
+- PureChat
 commands:
   hub:
     description: Return to the lobby
