@@ -137,7 +137,7 @@ public function onPlayerItemUse(PlayerItemUseEvent $event): void {
         if ($levelData["kills"] >= $requiredKills) {
             $levelData["level"]++;
             $levelData["kills"] = 0;
-            $player->sendMessage("§aYou have leveled up to Level " . $levelData["level"] . "!");
+            $player->sendMessage("§aYou have leveled up to Level " . $levelData["level"] . "!");  // TODO, add leaderboards to this shitty code frfr
         }
 
         $this->levels->set($name, $levelData);
