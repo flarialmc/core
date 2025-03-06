@@ -73,10 +73,14 @@ class Main extends PluginBase implements Listener {
         $inventory->setItem(8, $partyMenu);
     }
 
-    public function onPlayerInteract(PlayerInteractEvent $event): void {
-        $player = $event->getPlayer();
-        $item = $event->getItem();
+public function onPlayerInteract(PlayerInteractEvent $event): void {
+    $player = $event->getPlayer();
+    $item = $event->getItem();
+    $block = $event->getBlock();
+    $action = $event->getAction();
 
+    // If the player right-clicks a block OR interacts with air
+    if ($action === PlayerInteractEvent::RIGHT_CLICK_BLOCK || $block->getTypeId() === 0) {
         switch ($item->getCustomName()) {
             case "§aGame Selector":
                 $this->openGameSelector($player);
@@ -92,6 +96,8 @@ class Main extends PluginBase implements Listener {
                 break;
         }
     }
+}
+
 
     private function openCosmeticsMenu(Player $player): void {
         $form = new SimpleForm(function (Player $player, ?int $data) {
@@ -116,10 +122,10 @@ class Main extends PluginBase implements Listener {
             }
         });
 
-        $form->setTitle("Game Selector");
-        $form->addButton("Knockback FFA");
-        $player->sendForm($form);
-    }
+    $form->setTitle("§aGame Selector");
+    $form->addButton("§aKnock FFA", 0, "textures/items/stick.png");
+    $player->sendForm($form);
+}
 
     public function getLevel(Player $player): int {
         $name = $player->getName();
