@@ -8,7 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerItemUseEvent;  // OFC i forget to add dependencies T_T
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use jojoe77777\FormAPI\CustomForm;
