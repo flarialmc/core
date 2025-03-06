@@ -8,7 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use jojoe77777\FormAPI\CustomForm;
@@ -92,9 +92,6 @@ public function onPlayerItemUse(PlayerItemUseEvent $event): void {
             break;
     }
   }
-}
-
-
     private function openCosmeticsMenu(Player $player): void {
         $form = new SimpleForm(function (Player $player, ?int $data) {
             if ($data === null) return;
