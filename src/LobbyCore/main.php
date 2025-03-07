@@ -161,16 +161,16 @@ private function spawnFloatingText(Position $position, string $text): void {
         return;
     }
 
-    // Check if an old FloatingTextParticle exists, and replace its text
+    // Step 1: Manually remove previous floating text by sending a blank particle
     if ($this->floatingText !== null) {
-        $this->floatingText->setText(""); // Make the old text invisible
+        $this->floatingText->setText(""); // This clears the previous text
+        $world->addParticle(new Vector3($position->x, $position->y, $position->z), $this->floatingText);
     }
 
-    // Create a new FloatingTextParticle with updated text
+    // Step 2: Create a new floating text particle with updated text
     $this->floatingText = new FloatingTextParticle($text);
     $world->addParticle(new Vector3($position->x, $position->y, $position->z), $this->floatingText);
 }
-
 
 public function onPlayerKill(PlayerKillEvent $event): void {
     $player = $event->getPlayer();
