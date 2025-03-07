@@ -8,7 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerItemUseEvent;  // OFC i forget to add dependencies T_T
+use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use jojoe77777\FormAPI\CustomForm;
@@ -25,30 +25,31 @@ use pocketmine\world\World;
 use pocketmine\entity\animal\walking\Wolf;
 use pocketmine\entity\animal\walking\Cat;
 use pocketmine\entity\animal\flying\Parrot;
-use pocketmine\entity\Living;
-use pocketmine\math\Vector3;
-use pocketmine\utils\TextFormat;
 
 
 class Main extends PluginBase implements Listener {
-
+    private ?FloatingTextParticle $floatingText = null;
     private Config $friends;
     private Config $friendRequests;
     private Config $levels;
     private array $pets = [];
     private array $petNames = [];
-
+    private Position $leaderboardPosition;
     public function onEnable(): void {
         $this->getLogger()->info("LobbyCore has been enabled!");
 
         @mkdir($this->getDataFolder());
-
+        
         $this->levels = new Config($this->getDataFolder() . "levels.yml", Config::YAML);
         $this->friends = new Config($this->getDataFolder() . "friends.yml", Config::YAML);
         $this->friendRequests = new Config($this->getDataFolder() . "friendRequests.yml", Config::YAML);
-
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
+        $this->updateLeaderboard();
+    }), 20 * 10);
     }
+   
+
 
     public function onPlayerJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
@@ -126,31 +127,81 @@ public function onPlayerItemUse(PlayerItemUseEvent $event): void {
         return (int) $levelData["level"];
     }
 
-    public function onPlayerKill(PlayerKillEvent $event): void {
-        $player = $event->getPlayer();
-        $name = $player->getName();
-        $levelData = $this->levels->get($name, ["level" => 1, "kills" => 0]);
-        
-        $levelData["kills"]++;
-        $requiredKills = $this->getRequiredKills($levelData["level"]);
+public function updateLeaderboard(): void {
+    $data = $this->levels->getAll();
+    $leaderboard = [];
+    
+    foreach ($data as $name => $stats) {
+        $leaderboard[$name] = $stats["kills"] ?? 0;
+    }
+    
+    arsort($leaderboard); // Sort by kills in descending order
+    $topPlayers = array_slice($leaderboard, 0, 10, true); // Get top 10
+    
+    $leaderboardText = "§l§6Top 10 Kill Leaders:\n";
+    $position = 1;
+    foreach ($topPlayers as $name => $kills) {
+        $leaderboardText .= "§e#{$position} §f{$name}: §c{$kills} kills\n";
+        $position++;
+    }
+    
+    $position = new Position(7, 10, -54, $this->getServer()->getWorldManager()->getDefaultWorld()); // Change to your leaderboard location
+    $this->spawnFloatingText($position, $leaderboardText);
+}
 
-        if ($levelData["kills"] >= $requiredKills) {
-            $levelData["level"]++;
-            $levelData["kills"] = 0;
-            $player->sendMessage("§aYou have leveled up to Level " . $levelData["level"] . "!");  // TODO, add leaderboards to this shitty code frfr
+private function spawnFloatingText(Position $position, string $text): void {
+    $world = $position->getWorld();
+    if ($world === null) {
+        return;
+    }
+
+    // Check if an old FloatingTextParticle exists, and replace its text
+    if ($this->floatingText !== null) {
+        $this->floatingText->setText(""); // Make the old text invisible
+    }
+
+    // Create a new FloatingTextParticle with updated text
+    $this->floatingText = new FloatingTextParticle($text);
+    $world->addParticle(new Vector3($position->x, $position->y, $position->z), $this->floatingText);
+}
+
+
+public function onPlayerKill(PlayerKillEvent $event): void {
+    $player = $event->getPlayer();
+    $name = $player->getName();
+    $levelData = $this->levels->get($name, ["level" => 1, "kills" => 0]);
+    
+    $levelData["kills"]++;
+    $requiredKills = $this->getRequiredKills($levelData["level"]);
+
+    if ($levelData["kills"] >= $requiredKills) {
+        $levelData["level"]++;
+        $player->sendMessage("§aYou have leveled up to Level " . $levelData["level"] . "!");
+    }
+    
+    $this->levels->set($name, $levelData);
+    $this->levels->save();
+    $this->updateLeaderboard();
+}
+
+private function getRequiredKills(int $level): int {
+    $totalKills = 0;
+    for ($i = 1; $i <= $level; $i++) {
+        if ($i < 20) {
+            $totalKills += 12;
+        } elseif ($i < 40) {
+            $totalKills += 16;
+        } elseif ($i < 80) {
+            $totalKills += 20;
+        } elseif ($i < 99) {
+            $totalKills += 25;
+        } else {
+            $totalKills += 30;
         }
-
-        $this->levels->set($name, $levelData);
-        $this->levels->save();
     }
+    return $totalKills;
+}
 
-    private function getRequiredKills(int $level): int {
-        if ($level < 20) return 12;
-        if ($level < 40) return 16;
-        if ($level < 80) return 20;
-        if ($level < 99) return 25;
-        return 30;
-    }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if (!$sender instanceof Player) {
