@@ -25,6 +25,7 @@ use pocketmine\world\World;
 use pocketmine\entity\animal\walking\Wolf;
 use pocketmine\entity\animal\walking\Cat;
 use pocketmine\entity\animal\flying\Parrot;
+use pocketmine\entity\Living;
 
 
 class Main extends PluginBase implements Listener {
