@@ -27,6 +27,7 @@ use pocketmine\entity\animal\walking\Cat;
 use pocketmine\entity\animal\flying\Parrot;
 use pocketmine\entity\Living;
 use pocketmine\math\Vector3;
+use pocketmine\utils\TextFormat;
 
 
 class Main extends PluginBase implements Listener {
