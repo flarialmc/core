@@ -31,7 +31,7 @@ use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\Position;
-
+use pocketmine\world\particle\FloatingTextParticle;
 
 class Main extends PluginBase implements Listener {
     private ?FloatingTextParticle $floatingText = null;
