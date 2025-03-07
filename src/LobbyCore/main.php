@@ -29,6 +29,7 @@ use pocketmine\entity\Living;
 use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\Task;
+use pocketmine\scheduler\ClosureTask;
 
 class Main extends PluginBase implements Listener {
     private ?FloatingTextParticle $floatingText = null;
